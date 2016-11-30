@@ -82,9 +82,9 @@ def getsignpagecode(driver):
     driver.switch_to_frame('login_frame')
     driver.find_element_by_id('switcher_plogin').click()
     driver.find_element_by_id('u').clear()
-    driver.find_element_by_id('u').send_keys('')
+    driver.find_element_by_id('u').send_keys('your_number')
     driver.find_element_by_id('p').clear()
-    driver.find_element_by_id('p').send_keys('')
+    driver.find_element_by_id('p').send_keys('your_password')
     driver.find_element_by_id('login_button').click()
     time.sleep(3)
     return driver,driver.page_source
