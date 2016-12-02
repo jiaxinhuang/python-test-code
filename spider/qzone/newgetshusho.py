@@ -196,7 +196,7 @@ def signin(login_number):
     return driver
     
 def main(numbers):
-    signin_number = {"number":"404117911", "password":"shake1993090738"}
+    signin_number = {"number":"", "password":""}
     client = pymongo.MongoClient("localhost",27017)
     database = client.db_shuoshuo_content
     table_information = database.t_shuoshuo_content
