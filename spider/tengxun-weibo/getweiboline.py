@@ -8,6 +8,7 @@ Created on 2016年12月13日
 import requests
 import time
 from bs4 import BeautifulSoup
+from pybloom import BloomFilter, ScalableBloomFilter
 import re
 import pymongo
 import MySQLdb
@@ -90,14 +91,36 @@ def getinformation(page_code):
             content_dict = {}
             msg_content = item.find(name="div", attrs={"class":"msgCnt"})
 #         print "msg_content:",str(msg_content)
-            content_dict["msg_content"] = str(msg_content)
+            if msg_content != None:
+                msg_string = []
+                for string in msg_content.stripped_strings:
+                    msg_string.append(str(string)) 
+#                 print "msg_string:",msg_string
+            else:
+                msg_string = "None"
+            content_dict["msg_content"] = str(msg_string)
     
             tran_content = item.find(name="div", attrs={"class":"replyBox"})
 #         print "tran_content:",str(tran_content)
-            content_dict["tran_content"] = str(tran_content)
+            if tran_content != None:
+                tran_string = []
+                for string in tran_content.stripped_strings:
+                    tran_string.append(str(string))
+#                 print "tran_string:",tran_string
+            else:
+                tran_string = "None"
+            content_dict["tran_content"] = str(tran_string)
+            
             picturl_or_vedio = item.find(name="div", attrs={"class":"clear"})
 #         print "picturl_or_vedio:",str(picturl_or_vedio)
-            content_dict["picturl_or_vedio"] = str(picturl_or_vedio)
+            if picturl_or_vedio != None:
+                picturl_or_vedio_string = []
+                for string in picturl_or_vedio.stripped_strings:
+                    picturl_or_vedio_string.append(str(string)) 
+#                 print "picturl_or_vedio_string:",picturl_or_vedio_string
+            else:
+                picturl_or_vedio_string = "None"
+            content_dict["picturl_or_vedio"] = str(picturl_or_vedio_string)
     
             public_information = item.find(name="div", attrs={"class":"pubInfo"})
             platform = public_information.find(name="i", attrs={"class":"sico"})
@@ -122,16 +145,18 @@ def main(user_ids):
     client = pymongo.MongoClient("localhost",27017)
     database = client.db_tx_wb_content
     table_information = database.t_weibo_content
+    user_bf = BloomFilter(capacity=100000000, error_rate=0.01)
     for user_id in user_ids:
-        try:
-            page_code = getpage(user_id)
-            information_dict = getinformation(page_code)
-        except:
-            information_dict = {"information":"None"}
-        information_dict["UserId"] = user_id
-        print information_dict
-        time.sleep(3)
-        table_information.insert(information_dict)
+        if (user_id in user_bf) == False:
+            try:
+                page_code = getpage(user_id)
+                information_dict = getinformation(page_code)
+            except:
+                information_dict = {"information":"None"}
+            information_dict["UserId"] = user_id
+#             print information_dict
+#             time.sleep(3)
+            table_information.insert(information_dict)
 #         print information_dict
     client.close()
     
