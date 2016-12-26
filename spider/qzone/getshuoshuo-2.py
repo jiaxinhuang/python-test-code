@@ -251,7 +251,7 @@ def popnumbers():
 
 
 def main(numbers):
-    signnumber = {"number":"1361947855", "password":"cccccccccc"}
+    signnumber = {"number":"1361947855", "password":""}
     driver = signin(signnumber)
     temp_friend_dict = {}
     information_list = []
